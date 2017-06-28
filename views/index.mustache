@@ -12,15 +12,15 @@
       <ul>
         {{#todoList}}
         <li>
-          <button type="submit" name="incompleteTask" value="{{.}}">Mark complete</button>
-          {{.}}
+          <button type="submit" name="incompleteTask" value="{{item}}">Mark complete</button>
+          {{item}}
         </li>
         {{/todoList}}
       </ul>
       <h2>Completed Tasks</h2>
       <ul>
         {{#completedList}}
-        <li>{{.}}</li>
+        <li>{{item}}</li>
         {{/completedList}}
       </ul>
     </form>
