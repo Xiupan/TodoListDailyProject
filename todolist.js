@@ -24,19 +24,20 @@ app.get('/', function(request, response){
     where: {
       completed: false
     }
-  }).then(function(todoList){
+  }).then(function(todoAllFalse){
     models.Todo.findAll({
       where: {
         completed: true
       }
     })
-  }).then(function(completed){
-    console.log(todoList);
+  }).then(function(todoAllTrue){
     response.render('index', {
-      todoList: todoList,
-      completedList: completed
+      todoList: todoAllFalse,
+      completedList: todoAllTrue
     });
   });
+  // console.log('todoList ' + todoList);
+  // console.log('completed ' + completed);
 });
 
 var todoList = [];
@@ -84,3 +85,16 @@ app.post('/', function(request, response){
   //   console.log('toComplete ' + toComplete);
   // }
 });
+
+app.post('/', function(request, response) {
+  models.Todo.update({
+      completed: true
+    }, {
+      where: {
+        completed: request.body.incompleteTask
+      }
+    })
+    .then(function() {
+      response.redirect('/')
+    })
+})
