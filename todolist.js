@@ -1,9 +1,13 @@
+//todoDB
+//Todos Table
+
 const express = require('express');
 const path = require('path');
 const mustacheExpress = require('mustache-express');
 const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
 const models = require('./models');
+const faker = require('faker');
 
 const app = express();
 
@@ -19,82 +23,55 @@ app.listen(3000, function () {
   console.log('Successfully started To-Do List application!');
 });
 
+// for (var i = 0; i < 8; i++) { // generate some data
+//   const todoData = models.Todo.build({
+//     item: faker.company.catchPhrase(),
+//     completed: false
+//   })
+//   todoData.save();
+// }
+
 app.get('/', function(request, response){
   models.Todo.findAll({
     where: {
       completed: false
     }
-  }).then(function(todoAllFalse){
+  }).then(function(incompleteItem){
     models.Todo.findAll({
       where: {
-        completed: true
+        completed : true
       }
+    }).then(function(completedItem){
+      response.render('index', {
+        todoList: incompleteItem,
+        completedList: completedItem
+      })
     })
-  }).then(function(todoAllTrue){
-    response.render('index', {
-      todoList: todoAllFalse,
-      completedList: todoAllTrue
-    });
-  });
-  // console.log('todoList ' + todoList);
-  // console.log('completed ' + completed);
-});
+  })
+})
 
-var todoList = [];
-var completedList = [];
-
-app.post('/', function(request, response){
-  var item = request.body.todoAdd;
-  var toComplete = request.body.incompleteTask;
+app.post('/todo-add', function(request, response){
 
   const itemBuild = models.Todo.build({ // adds the user input to the database
-    item: item,
+    item: request.body.todoAdd,
     completed: false
   });
 
-  itemBuild.save().then(function (newTodo) { // saves to database
-    todoList.push(newTodo);
-  })
-
-  models.Todo.update({
-    completed: true
-  }, {
-    where: {
-      item: toComplete
-    }
-  }).then(function(completed){
-    console.log(completed);
+  itemBuild.save().then(function(){
+    console.log(request.body.incompleteTask);
     response.redirect('/');
   })
-
-  // response.render('index', {
-  //   todoList: todoList,
-  //   completedList: completed
-  // });
-
-  // if(item){
-  //   todoList.push(item);
-  //   console.log('todoList ' + todoList);
-  // } else if (toComplete){
-  //   for (var i = 0; i < todoList.length; i++) {
-  //     if(todoList[i] === toComplete){
-  //       todoList.splice(i,1);
-  //     }
-  //   }
-  //   completedList.push(toComplete);
-  //   console.log('toComplete ' + toComplete);
-  // }
 });
 
-app.post('/', function(request, response) {
+app.post('/mark-complete', function(request, response) {
   models.Todo.update({
       completed: true
     }, {
       where: {
-        completed: request.body.incompleteTask
+        item: request.body.incompleteTask
       }
-    })
-    .then(function() {
-      response.redirect('/')
+    }).then(function() {
+      console.log(request.body.incompleteTask);
+      response.redirect('/');
     })
 })

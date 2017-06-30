@@ -6,14 +6,16 @@
     <link rel="stylesheet" href="master.css">
   </head>
   <body>
-    <form class="" action="/" method="post">
+    <form class="" action="/todo-add" method="post">
       <input type="text" name="todoAdd" placeholder="Add a todo...">
       <input type="submit" name="todoAddSubmit" value="Add todo">
       <ul>
         {{#todoList}}
         <li>
-          <button type="submit" name="incompleteTask" value="{{item}}">Mark complete</button>
-          {{item}}
+          <form class="" action="/mark-complete" method="post">
+            <button type="submit" name="incompleteTask" value="{{item}}">Mark complete</button>
+            {{item}}
+          </form>
         </li>
         {{/todoList}}
       </ul>
